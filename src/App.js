@@ -1,9 +1,5 @@
-import { Layout, Typography } from 'antd';
-import './App.css';
+import { Layout } from 'antd';
 import DomainsPage from './features/domains/DomainsPage';
-
-const { Header, Footer } = Layout;
-const { Title } = Typography;
 
 function App() {
   return (
