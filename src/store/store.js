@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { domainsApi } from '../services/domainsApi';
 
+// Configure the Redux store
 export const store = configureStore({
   reducer: {
     [domainsApi.reducerPath]: domainsApi.reducer,
