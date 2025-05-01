@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Button, Spin, Typography, Input, Select } from 'antd';
+import { Layout, Button, Typography, Input, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import DomainList from './components/DomainList';
 import { useDomainManagement } from './hooks/useDomainManagement';
@@ -70,7 +70,6 @@ const DomainsPage = () => {
             <Option value="id_asc">Order by (Created First)</Option>
             <Option value="id_desc">Order by (Created Last)</Option>
           </Select>
-          {isMutating && <Spin size="small" />}
         </div>
         <div className={styles.addButtonBlock}>
           <Button
@@ -88,7 +87,6 @@ const DomainsPage = () => {
           >
             Add Domain
           </Button>
-          {isMutating && <Spin size="small" />}
         </div>
       </div>
 
