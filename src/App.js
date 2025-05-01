@@ -1,7 +1,8 @@
 import { Layout, Typography } from 'antd';
 import './App.css';
+import DomainsPage from './features/domains/DomainsPage';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Footer } = Layout;
 const { Title } = Typography;
 
 function App() {
@@ -19,9 +20,7 @@ function App() {
           Domains Management
         </Title>
       </Header>
-      <Content style={{ padding: '20px 50px' }}>
-        <p>Welcome to the Domain Management App!</p>
-      </Content>
+      <DomainsPage />
       <Footer style={{ textAlign: 'center' }}>
         Front-End Assessment ©{new Date().getFullYear()}
       </Footer>
