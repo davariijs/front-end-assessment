@@ -14,6 +14,26 @@ import { useDebounce } from './useDebounce';
  * UI state (drawer visibility, editing target), search/sort state,
  * data processing (filtering, sorting), and user feedback.
  */
+
+// --- Helper function ---
+const normalizeDomainForComparison = (domainString) => {
+  if (!domainString) return '';
+  try {
+    let hostname = domainString.trim().toLowerCase();
+    hostname = hostname.replace(/^https?:\/\//, '');
+    hostname = hostname.replace(/^www\./, '');
+    hostname = hostname.replace(/\/$/, '');
+
+    return hostname;
+  } catch (e) {
+    let basicNormalized = domainString.trim().toLowerCase();
+    basicNormalized = basicNormalized.replace(/^https?:\/\//, '');
+    basicNormalized = basicNormalized.replace(/^www\./, '');
+    basicNormalized = basicNormalized.replace(/\/$/, '');
+    return basicNormalized;
+  }
+};
+
 export const useDomainManagement = () => {
   // --- State for Drawer ---
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -81,24 +101,43 @@ export const useDomainManagement = () => {
   // --- CRUD Action Handlers ---
   const saveDomain = async (values) => {
     try {
+      const submittedDomainNormalized = normalizeDomainForComparison(
+        values.domain
+      );
+      const existingDomains = rawDomains || [];
+
       if (editingDomain) {
         if (!editingDomain.id) {
           message.error('Cannot update domain: Missing ID.');
           return;
         }
+
+        const isDuplicateOnEdit = existingDomains.some(
+          (d) =>
+            d.id !== editingDomain.id &&
+            normalizeDomainForComparison(d.domain) === submittedDomainNormalized
+        );
+
+        if (isDuplicateOnEdit) {
+          message.error(
+            `The domain "${values.domain}" effectively duplicates an existing entry!`,
+            4
+          );
+          return;
+        }
+
         await updateDomain({ id: editingDomain.id, ...values }).unwrap();
         message.success('Domain updated successfully!');
         closeDrawer();
       } else {
-        const submittedDomain = values.domain?.trim().toLowerCase();
-        const existingDomains = rawDomains || [];
-        const isDuplicate = existingDomains.some(
-          (d) => d.domain?.trim().toLowerCase() === submittedDomain
+        const isDuplicateOnAdd = existingDomains.some(
+          (d) =>
+            normalizeDomainForComparison(d.domain) === submittedDomainNormalized
         );
 
-        if (isDuplicate) {
+        if (isDuplicateOnAdd) {
           message.error(
-            `Domain "${values.domain}" already exists in the list!`,
+            `The domain "${values.domain}" effectively duplicates an existing entry!`,
             4
           );
           return;
