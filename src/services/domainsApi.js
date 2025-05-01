@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 export const domainsApi = createApi({
   reducerPath: 'domainsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://6797aa2bc2c861de0c6d964c.mockapi.io/',
-  }),
+  baseQuery: fetchBaseQuery({ baseUrl: API_BASE_URL }),
   tagTypes: ['Domain'],
   endpoints: (builder) => ({
     // --- Get All Domains ---

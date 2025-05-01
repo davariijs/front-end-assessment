@@ -24,7 +24,7 @@ import {
 const { Text } = Typography;
 const { confirm } = Modal;
 
-// Helper function
+// Utility function to map status strings to AntD Tag colors
 const getVerificationStatusColor = (status) => {
   const lowerStatus = status?.toLowerCase();
   switch (lowerStatus) {
@@ -39,7 +39,12 @@ const getVerificationStatusColor = (status) => {
   }
 };
 
+/**
+ * Generates the column configuration array for the domains Ant Design Table.
+ * Includes definitions for rendering data, status indicators, and action menus.
+ */
 export const getDomainTableColumns = ({ onEdit, onDelete, onVerify }) => {
+  // -- Displays a confirmation modal before executing the delete action. --
   const showDeleteConfirm = (record) => {
     confirm({
       title: 'Delete this domain?',
@@ -52,16 +57,14 @@ export const getDomainTableColumns = ({ onEdit, onDelete, onVerify }) => {
       onOk() {
         onDelete(record.id);
       },
-      onCancel() {
-        console.log('Delete cancelled');
-      },
+      onCancel() {},
     });
   };
 
+  // -- Handles clicks on the action dropdown menu items. --
   const handleMenuClick = (key, record) => {
     switch (key) {
       case 'view_pages':
-        console.log('View Pages clicked for:', record.domain);
         message.info('View Pages action');
         break;
       case 'edit':
@@ -75,7 +78,6 @@ export const getDomainTableColumns = ({ onEdit, onDelete, onVerify }) => {
         }
         break;
       case 'install_script':
-        console.log('Install Script clicked for:', record.domain);
         message.info('Install Script action');
         break;
       case 'delete':

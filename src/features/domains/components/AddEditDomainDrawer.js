@@ -3,6 +3,11 @@ import { Drawer, Form, Input, Button, Space, Spin, Switch, Select } from 'antd';
 
 const { Option } = Select;
 
+/**
+ * Drawer component for adding or editing domains using an Ant Design Form.
+ * Handles pre-filling data for editing and resetting for adding.
+ */
+
 const AddEditDomainDrawer = ({
   visible,
   onClose,
@@ -13,6 +18,7 @@ const AddEditDomainDrawer = ({
   const [form] = Form.useForm();
   const isEditMode = Boolean(initialData);
 
+  // --- Effect to sync form with initialData when drawer visibility or data changes. --
   useEffect(() => {
     if (visible) {
       if (initialData) {
@@ -27,13 +33,9 @@ const AddEditDomainDrawer = ({
     }
   }, [visible, initialData, form]);
 
+  // --- Passes validated values to the parent handler on successful submission. --
   const handleFinish = (values) => {
-    console.log('Form Values Submitted:', values);
     onSave(values);
-  };
-
-  const handleFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -70,7 +72,6 @@ const AddEditDomainDrawer = ({
           form={form}
           layout="vertical"
           onFinish={handleFinish}
-          onFinishFailed={handleFinishFailed}
           requiredMark={false}
           initialValues={{
             isActive: true,
