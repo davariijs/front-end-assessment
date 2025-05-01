@@ -82,23 +82,24 @@ const AddEditDomainDrawer = ({
             name="domain"
             label="Domain URL"
             rules={[
-              { required: true, message: 'Please enter the domain URL' },
               {
-                type: 'url',
-                warningOnly: true,
+                required: true,
+                message: 'Please enter the HTTPS URL',
+              },
+              {
+                pattern:
+                  /^https?:\/\/(www\.)?(?!-)[a-zA-Z0-9-]{1,63}(?<!-)(\.[a-zA-Z0-9-]{1,63}(?<!-))*\.[a-zA-Z]{2,}(\/.*)?$/,
                 message:
-                  'Please enter a valid URL format (e.g., example.com or https://example.com)',
+                  'Must be a valid HTTP or HTTPS URL (e.g., https://example.com)',
               },
               {
                 validator: (_, value) =>
                   !value || value.indexOf(' ') < 0
                     ? Promise.resolve()
-                    : Promise.reject(
-                        new Error('Domain URL cannot contain spaces')
-                      ),
+                    : Promise.reject(new Error('URL cannot contain spaces')),
               },
             ]}
-            tooltip="Enter the domain name, like 'example.com' or 'sub.example.co.uk'"
+            tooltip="Enter the full URL, e.g., https://www.example.com or http://example.com/path"
           >
             <Input placeholder="e.g., example.com" />
           </Form.Item>
