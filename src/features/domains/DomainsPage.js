@@ -1,12 +1,20 @@
 import React from 'react';
-import { Layout, Button, Spin, Typography, Space } from 'antd';
+import { Layout, Button, Spin, Typography, Input, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import DomainList from './components/DomainList';
 import { useDomainManagement } from './hooks/useDomainManagement';
 import AddEditDomainDrawer from './components/AddEditDomainDrawer';
+import styles from './DomainsPage.module.css';
 
 const { Content } = Layout;
+const { Option } = Select;
+const { Title } = Typography;
 
+/**
+ * Main page component for displaying and managing domains.
+ * Orchestrates fetching data, handling user actions via a custom hook,
+ * and rendering the list, search/sort controls, and add/edit drawer.
+ */
 const DomainsPage = () => {
   // --- Use the custom hook to encapsulate logic ---
   const {
@@ -22,26 +30,16 @@ const DomainsPage = () => {
     saveDomain,
     deleteDomainById,
     verifyDomain,
+    searchTerm,
+    setSearchTerm,
+    sortOrder,
+    setSortOrder,
   } = useDomainManagement();
-
-  const { Title } = Typography;
 
   return (
     <Content style={{ padding: '20px' }}>
-      <div
-        style={{
-          marginBottom: '20px',
-          background: '#fff',
-          padding: '16px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          border: '1px solid #f0f0f0',
-          flexWrap: 'wrap',
-          gap: '10px',
-        }}
-      >
-        <div>
+      <div className={styles.headerContainer}>
+        <div className={styles.titleBlock}>
           <Title level={3} style={{ marginBottom: '4px', marginRight: '10px' }}>
             Domains
           </Title>
@@ -49,7 +47,32 @@ const DomainsPage = () => {
             Manage your registered domains
           </Typography.Text>
         </div>
-        <Space>
+        <div className={styles.controlsBlock}>
+          <Input.Search
+            placeholder="Search domains..."
+            allowClear
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onSearch={(value) => setSearchTerm(value)}
+            style={{ width: 250 }}
+            loading={isLoading}
+            size="large"
+          />
+          <Select
+            className={styles.sortSelect}
+            value={sortOrder}
+            onChange={(value) => setSortOrder(value)}
+            style={{ width: 200 }}
+            size="large"
+          >
+            <Option value="name_asc">Order by (A-Z)</Option>
+            <Option value="name_desc">Order by (Z-A)</Option>
+            <Option value="id_asc">Order by (Created First)</Option>
+            <Option value="id_desc">Order by (Created Last)</Option>
+          </Select>
+          {isMutating && <Spin size="small" />}
+        </div>
+        <div className={styles.addButtonBlock}>
           <Button
             key="1"
             type="primary"
@@ -57,12 +80,16 @@ const DomainsPage = () => {
             onClick={openAddDrawer}
             loading={isMutating}
             size="large"
-            style={{ display: 'flex', alignItems: 'center' }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 600,
+            }}
           >
             Add Domain
           </Button>
           {isMutating && <Spin size="small" />}
-        </Space>
+        </div>
       </div>
 
       <div style={{ background: '#fff', padding: 24 }}>

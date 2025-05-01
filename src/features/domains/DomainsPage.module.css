@@ -1,0 +1,61 @@
+.headerContainer {
+  margin-bottom: 20px;
+  background: #fff;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #f0f0f0;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.titleBlock {
+  flex: 1 1 auto;
+  min-width: 250px;
+}
+
+.controlsBlock {
+  flex: 0 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.sortSelect :global(.ant-select-selection-item) {
+  font-size: 15px !important;
+}
+
+
+.addButtonBlock {
+  flex: 0 0 auto;
+}
+
+/* --- Medium Screens --- */
+@media (max-width: 992px) {
+  .controlsBlock {
+    flex-basis: 100%;
+    order: 1;
+    justify-content: center;
+  }
+}
+
+/* --- Small Screens --- */
+@media (max-width: 576px) {
+  .headerContainer {
+    justify-content: center;
+  }
+  .titleBlock,
+  .controlsBlock,
+  .addButtonBlock {
+    flex-basis: 100%;
+    order: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .titleBlock {
+    text-align: center;
+    flex-direction: column;
+  }
+}
