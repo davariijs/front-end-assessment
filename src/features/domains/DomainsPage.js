@@ -1,8 +1,9 @@
 import React from 'react';
 import { Layout, Button, Spin, Typography, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import DomainList from './DomainList';
-import { useDomainManagement } from './useDomainManagement';
+import DomainList from './components/DomainList';
+import { useDomainManagement } from './hooks/useDomainManagement';
+import AddEditDomainDrawer from './components/AddEditDomainDrawer';
 
 const { Content } = Layout;
 
@@ -20,6 +21,7 @@ const DomainsPage = () => {
     closeDrawer,
     saveDomain,
     deleteDomainById,
+    verifyDomain,
   } = useDomainManagement();
 
   const { Title } = Typography;
@@ -35,10 +37,12 @@ const DomainsPage = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           border: '1px solid #f0f0f0',
+          flexWrap: 'wrap',
+          gap: '10px',
         }}
       >
         <div>
-          <Title level={4} style={{ marginBottom: '4px' }}>
+          <Title level={3} style={{ marginBottom: '4px', marginRight: '10px' }}>
             Domains
           </Title>
           <Typography.Text type="secondary">
@@ -52,6 +56,8 @@ const DomainsPage = () => {
             icon={<PlusOutlined />}
             onClick={openAddDrawer}
             loading={isMutating}
+            size="large"
+            style={{ display: 'flex', alignItems: 'center' }}
           >
             Add Domain
           </Button>
@@ -66,8 +72,17 @@ const DomainsPage = () => {
           error={getError}
           onEdit={openEditDrawer}
           onDelete={deleteDomainById}
+          onVerify={verifyDomain}
         />
       </div>
+
+      <AddEditDomainDrawer
+        visible={isDrawerVisible}
+        onClose={closeDrawer}
+        onSave={saveDomain}
+        initialData={editingDomain}
+        isLoading={isMutating}
+      />
     </Content>
   );
 };

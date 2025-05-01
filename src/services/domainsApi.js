@@ -13,16 +13,10 @@ export const domainsApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ _id }) => ({ type: 'Domain', id: _id })),
+              ...result.map(({ id }) => ({ type: 'Domain', id: id })),
               { type: 'Domain', id: 'LIST' },
             ]
           : [{ type: 'Domain', id: 'LIST' }],
-    }),
-
-    // --- Get Single Domain by ID ---
-    getDomainById: builder.query({
-      query: (id) => `domain/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Domain', id }],
     }),
 
     // --- Add New Domain ---
@@ -64,7 +58,6 @@ export const domainsApi = createApi({
 
 export const {
   useGetDomainsQuery,
-  useGetDomainByIdQuery,
   useAddDomainMutation,
   useUpdateDomainMutation,
   useDeleteDomainMutation,
