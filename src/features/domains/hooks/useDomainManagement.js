@@ -183,7 +183,7 @@ export const useDomainManagement = () => {
     });
 
     return processedDomains;
-  }, [rawDomains, debouncedSearchTerm, sortOrder]);
+  }, [rawDomains, debouncedSearchTerm, sortOrder, searchTerm]);
 
   return {
     domains: filteredAndSortedDomains,
