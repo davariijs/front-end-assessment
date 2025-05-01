@@ -19,7 +19,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env NODE_OPTIONS=--max-old-space-size=8192 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -50,7 +50,6 @@
     ]
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-prettier": "5.2.6",
     "prettier": "3.5.3"
