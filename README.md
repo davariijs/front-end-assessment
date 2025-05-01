@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+# Front-End Assessment - Domain Management App ⚛️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A single-page application built with React to manage a list of domains, allowing users to add, edit, delete, verify, search, and sort domain entries. This project was created as part of a front-end assessment.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Live Demo
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## ✨ Features Implemented
 
-### `npm test`
+- **List Domains:** Displays domains in a table with status indicators and details.
+- **Add Domain:** Allows adding new domains via a drawer form.
+- **Edit Domain:** Allows editing existing domain details (URL, Active Status, Verification Status) in the same drawer form.
+- **Delete Domain:** Allows deleting domains with a confirmation step (`Modal.confirm`).
+- **Verify Domain:** Allows marking a domain as 'Verified' and 'Active' via an action menu item (using `PUT`).
+- **Search:** Filters the domain list based on user input in the search bar (case-insensitive).
+- **Sort:** Sorts the domain list by Name (A-Z, Z-A) or by ID (Created First/Last) using a dropdown.
+- **Validation:** Includes basic form validation (required fields, no spaces in URL, basic URL format warning).
+- **Duplicate Check:** Prevents adding a new domain if one with the same name already exists in the list (front-end check).
+- **API Interaction:** Uses RTK Query for efficient data fetching, caching, and mutations against the provided MockAPI.
+- **State Management:** Utilizes RTK Query for server state and React Hooks (`useState`, `useEffect`, `useMemo`) within a custom hook (`useDomainManagement`) for client/UI state.
+- **Responsive UI:** The header layout adjusts for different screen sizes using CSS Modules.
+- **User Feedback:** Uses Ant Design `message` components for success/error feedback on actions.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🛠️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **React:** v19 (with `@ant-design/v5-patch-for-react-19`)
+- **Ant Design (AntD):** v5 - Component Library
+- **Redux Toolkit** + **RTK Query:** State Management & Data Fetching
+- **CSS Modules:** Scoped CSS Styling
+- **ESLint & Prettier:** Code Linting & Formatting
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚙️ Setup and Run Instructions
 
-### `npm run eject`
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/davariijs/front-end-assessment.git
+    cd front-end-assessment
+    ```
+2.  **Install dependencies:**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    ```bash
+    npm install
+    ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3.  **Environment Variables:**
+    - Create a `.env` file in the project root (copy `.env.example`).
+    - Add the API base URL variable:
+      ```dotenv
+      # Contents for .env file
+      REACT_APP_API_BASE_URL=
+      ```
+4.  **Run the development server:**
+    ```bash
+    npm start
+    ```
+5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🤔 Design Decisions & Notes
 
-## Learn More
+- A custom hook (`useDomainManagement`) encapsulates state management, API logic, and data processing (filtering/sorting) for the domains feature.
+- Sorting uses Domain Name or ID. ID sort is used as a proxy for creation order ("Created First"/"Created Last").
+- A front-end duplicate check was added during 'Add Domain' as the MockAPI allows duplicate entries.
+- The UI generally follows the provided mockups, with adjustments for responsiveness and clarity (e.g., sort option labels).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ⚠️ Known Issues / Limitations
 
-### Code Splitting
+- The MockAPI endpoint (`GET /domain`) returns duplicate domain entries; the UI displays these as received.
+- "View pages" and "Install script" actions are placeholders with no implemented functionality.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
