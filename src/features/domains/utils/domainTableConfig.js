@@ -1,16 +1,13 @@
 import React from 'react';
 import {
-  Table,
   Tag,
   Space,
   Tooltip,
   Button,
-  Spin,
-  Alert,
-  Popconfirm,
   message,
   Dropdown,
   Typography,
+  Modal,
 } from 'antd';
 import {
   EditOutlined,
@@ -25,8 +22,9 @@ import {
 } from '@ant-design/icons';
 
 const { Text } = Typography;
+const { confirm } = Modal;
 
-// Helper function to determine tag color based on verification status
+// Helper function
 const getVerificationStatusColor = (status) => {
   const lowerStatus = status?.toLowerCase();
   switch (lowerStatus) {
@@ -41,34 +39,60 @@ const getVerificationStatusColor = (status) => {
   }
 };
 
-const DomainList = ({ data, isLoading, error, onEdit, onDelete }) => {
+export const getDomainTableColumns = ({ onEdit, onDelete, onVerify }) => {
+  const showDeleteConfirm = (record) => {
+    confirm({
+      title: 'Delete this domain?',
+      icon: <ExclamationCircleFilled style={{ color: '#ff4d4f' }} />,
+      content: `Are you sure you want to delete ${record.domain}? This action cannot be undone.`,
+      okText: 'Yes, Delete',
+      okType: 'danger',
+      okButtonProps: { danger: true },
+      cancelText: 'Cancel',
+      onOk() {
+        onDelete(record.id);
+      },
+      onCancel() {
+        console.log('Delete cancelled');
+      },
+    });
+  };
+
   const handleMenuClick = (key, record) => {
     switch (key) {
       case 'view_pages':
         console.log('View Pages clicked for:', record.domain);
-        message.info('View Pages action triggered (placeholder).');
+        message.info('View Pages action');
         break;
       case 'edit':
         onEdit(record);
         break;
       case 'verify':
-        console.log('Verify clicked for:', record.domain);
-        message.info('Verify action triggered (placeholder).');
+        if (record.status !== 'verified') {
+          onVerify(record.id);
+        } else {
+          message.info('Domain is already verified.');
+        }
         break;
       case 'install_script':
         console.log('Install Script clicked for:', record.domain);
-        message.info('Install Script action triggered (placeholder).');
+        message.info('Install Script action');
+        break;
+      case 'delete':
+        showDeleteConfirm(record);
         break;
       default:
         break;
     }
   };
 
+  // --- The columns array definition ---
   const columns = [
     {
       title: 'Domain URL',
       dataIndex: 'domain',
       key: 'domain',
+      width: 350,
       render: (text, record) => (
         <Space align="center">
           <Tooltip title={record.isActive ? 'Active' : 'Not Active'}>
@@ -131,15 +155,12 @@ const DomainList = ({ data, isLoading, error, onEdit, onDelete }) => {
             icon: <EyeOutlined />,
             disabled: true,
           },
-          {
-            key: 'edit',
-            label: 'Edit',
-            icon: <EditOutlined />,
-          },
+          { key: 'edit', label: 'Edit', icon: <EditOutlined /> },
           {
             key: 'verify',
             label: 'Verify',
             icon: <CheckSquareOutlined />,
+            disabled: record.status === 'verified',
           },
           {
             key: 'install_script',
@@ -147,27 +168,10 @@ const DomainList = ({ data, isLoading, error, onEdit, onDelete }) => {
             icon: <CodeOutlined />,
             disabled: true,
           },
-          {
-            type: 'divider',
-          },
+          { type: 'divider' },
           {
             key: 'delete',
-            label: (
-              <Popconfirm
-                title="Delete this domain?"
-                description={`Are you sure you want to delete ${record.domain}?`}
-                onConfirm={(e) => {
-                  e?.stopPropagation();
-                  onDelete(record._id);
-                }}
-                onCancel={(e) => e?.stopPropagation()}
-                okText="Yes, Delete"
-                okButtonProps={{ danger: true }}
-                cancelText="Cancel"
-              >
-                <span style={{ color: '#ff4d4f' }}>Delete</span>
-              </Popconfirm>
-            ),
+            label: <span style={{ color: '#ff4d4f' }}>Delete</span>,
             icon: <DeleteOutlined style={{ color: '#ff4d4f' }} />,
           },
         ];
@@ -187,29 +191,5 @@ const DomainList = ({ data, isLoading, error, onEdit, onDelete }) => {
     },
   ];
 
-  if (error) {
-    const errorMessage =
-      error?.data?.message || error?.error || 'Failed to load domains.';
-    return (
-      <Alert message="Error" description={errorMessage} type="error" showIcon />
-    );
-  }
-
-  return (
-    <Spin spinning={isLoading} tip="Loading domains...">
-      <Table
-        columns={columns}
-        dataSource={data || []}
-        rowKey="_id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          pageSizeOptions: ['5', '10', '20', '50'],
-        }}
-        scroll={{ x: 950 }}
-      />
-    </Spin>
-  );
+  return columns;
 };
-
-export default DomainList;
