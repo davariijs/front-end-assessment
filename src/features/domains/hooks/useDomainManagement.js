@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import {
   useGetDomainsQuery,
@@ -6,15 +6,29 @@ import {
   useUpdateDomainMutation,
   useDeleteDomainMutation,
 } from '../../../services/domainsApi';
+import { useDebounce } from './useDebounce';
 
+/**
+ * Custom hook encapsulating state and logic for the domain management feature.
+ * Handles data fetching, mutations (add, update, delete, verify),
+ * UI state (drawer visibility, editing target), search/sort state,
+ * data processing (filtering, sorting), and user feedback.
+ */
 export const useDomainManagement = () => {
   // --- State for Drawer ---
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [editingDomain, setEditingDomain] = useState(null);
 
+  // --- State for Search and Filter/Sort ---
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('id_desc');
+
+  // --- Add Debounced Search Term ---
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
+
   // --- RTK Query Hooks ---
   const {
-    data: domains,
+    data: rawDomains,
     error: getError,
     isLoading: isGetLoading,
     isFetching: isGetFetching,
@@ -27,7 +41,6 @@ export const useDomainManagement = () => {
     useDeleteDomainMutation();
 
   // Combined loading states
-  const isLoading = isGetLoading || isGetFetching;
   const isMutating = isAddLoading || isUpdateLoading || isDeleteLoading;
 
   // --- Error Handling Effect ---
@@ -50,7 +63,6 @@ export const useDomainManagement = () => {
   };
 
   const openEditDrawer = (domain) => {
-    console.log('Opening edit drawer for:', domain);
     if (!domain?.id) {
       console.error(
         'Domain object passed to openEditDrawer is missing id:',
@@ -70,9 +82,7 @@ export const useDomainManagement = () => {
   const saveDomain = async (values) => {
     try {
       if (editingDomain) {
-        console.log('Attempting to update domain:', editingDomain);
         if (!editingDomain.id) {
-          console.error('Error: editingDomain.id is missing!', editingDomain);
           message.error('Cannot update domain: Missing ID.');
           return;
         }
@@ -80,9 +90,8 @@ export const useDomainManagement = () => {
         message.success('Domain updated successfully!');
         closeDrawer();
       } else {
-        console.log('Attempting to add new domain with values:', values);
         const submittedDomain = values.domain?.trim().toLowerCase();
-        const existingDomains = domains || [];
+        const existingDomains = rawDomains || [];
         const isDuplicate = existingDomains.some(
           (d) => d.domain?.trim().toLowerCase() === submittedDomain
         );
@@ -92,7 +101,6 @@ export const useDomainManagement = () => {
             `Domain "${values.domain}" already exists in the list!`,
             4
           );
-          console.warn('Duplicate domain detected:', values.domain);
           return;
         }
 
@@ -101,7 +109,6 @@ export const useDomainManagement = () => {
           createdDate: Math.floor(Date.now() / 1000),
         };
 
-        console.log('Sending payload for add:', newDomainPayload);
         await addDomain(newDomainPayload).unwrap();
         message.success('Domain added successfully!');
         closeDrawer();
@@ -121,7 +128,6 @@ export const useDomainManagement = () => {
   };
 
   const verifyDomain = async (id) => {
-    console.log('Attempting to verify domain with id:', id);
     try {
       const payload = {
         id: id,
@@ -135,9 +141,53 @@ export const useDomainManagement = () => {
     }
   };
 
+  // --- Filtering and Sorting Logic ---
+  const filteredAndSortedDomains = useMemo(() => {
+    let processedDomains = rawDomains ? [...rawDomains] : [];
+
+    if (debouncedSearchTerm) {
+      const lowerSearchTerm = debouncedSearchTerm.toLowerCase();
+      processedDomains = processedDomains.filter((domain) =>
+        domain.domain?.toLowerCase().includes(lowerSearchTerm)
+      );
+    }
+
+    if (searchTerm) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      processedDomains = processedDomains.filter((domain) =>
+        domain.domain?.toLowerCase().includes(lowerSearchTerm)
+      );
+    }
+
+    processedDomains.sort((a, b) => {
+      switch (sortOrder) {
+        case 'name_asc':
+          return (a.domain?.toLowerCase() || '').localeCompare(
+            b.domain?.toLowerCase() || ''
+          );
+        case 'name_desc':
+          return (b.domain?.toLowerCase() || '').localeCompare(
+            a.domain?.toLowerCase() || ''
+          );
+
+        case 'id_asc': {
+          return (Number(a.id) || 0) - (Number(b.id) || 0);
+        }
+        case 'id_desc': {
+          return (Number(b.id) || 0) - (Number(a.id) || 0);
+        }
+
+        default:
+          return 0;
+      }
+    });
+
+    return processedDomains;
+  }, [rawDomains, debouncedSearchTerm, sortOrder]);
+
   return {
-    domains,
-    isLoading,
+    domains: filteredAndSortedDomains,
+    isLoading: isGetLoading || isGetFetching,
     isMutating,
     getError,
     isDrawerVisible,
@@ -148,5 +198,9 @@ export const useDomainManagement = () => {
     saveDomain,
     deleteDomainById,
     verifyDomain,
+    searchTerm,
+    setSearchTerm,
+    sortOrder,
+    setSortOrder,
   };
 };
