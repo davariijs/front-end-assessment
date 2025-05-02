@@ -34,6 +34,10 @@ const DomainsPage = () => {
     setSearchTerm,
     sortOrder,
     setSortOrder,
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
   } = useDomainManagement();
 
   return (
@@ -98,6 +102,10 @@ const DomainsPage = () => {
           onEdit={openEditDrawer}
           onDelete={deleteDomainById}
           onVerify={verifyDomain}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          setCurrentPage={setCurrentPage}
+          setPageSize={setPageSize}
         />
       </div>
 

@@ -6,8 +6,20 @@ import { getDomainTableColumns } from '../utils/domainTableConfig';
  * Renders the main table displaying the list of domains.
  * Receives domain data and action handlers as props.
  * Handles displaying loading and error states.
+ * Manages table pagination state via props.
  */
-const DomainList = ({ data, isLoading, error, onEdit, onDelete, onVerify }) => {
+const DomainList = ({
+  data,
+  isLoading,
+  error,
+  onEdit,
+  onDelete,
+  onVerify,
+  currentPage,
+  pageSize,
+  setCurrentPage,
+  setPageSize,
+}) => {
   // -- Retrieve column definitions, passing action handlers down --
   const columns = getDomainTableColumns({ onEdit, onDelete, onVerify });
 
@@ -27,7 +39,16 @@ const DomainList = ({ data, isLoading, error, onEdit, onDelete, onVerify }) => {
         dataSource={data || []}
         rowKey="id"
         pagination={{
-          pageSize: 10,
+          current: currentPage,
+          pageSize: pageSize,
+          onChange: (page, size) => {
+            setCurrentPage(page);
+            if (size !== pageSize) {
+              setPageSize(size);
+              setCurrentPage(1);
+            }
+          },
+          total: data?.length || 0,
           showSizeChanger: true,
           pageSizeOptions: ['5', '10', '20', '50'],
         }}

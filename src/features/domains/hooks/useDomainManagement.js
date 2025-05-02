@@ -46,6 +46,10 @@ export const useDomainManagement = () => {
   // --- Add Debounced Search Term ---
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
+  // --- Pagination State ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   // --- RTK Query Hooks ---
   const {
     data: rawDomains,
@@ -246,6 +250,11 @@ export const useDomainManagement = () => {
     return processedDomains;
   }, [rawDomains, debouncedSearchTerm, sortOrder, searchTerm]);
 
+  // --- page number when filters/data change ---
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredAndSortedDomains.length, pageSize]);
+
   return {
     domains: filteredAndSortedDomains,
     isLoading: isGetLoading || isGetFetching,
@@ -263,5 +272,9 @@ export const useDomainManagement = () => {
     setSearchTerm,
     sortOrder,
     setSortOrder,
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
   };
 };
