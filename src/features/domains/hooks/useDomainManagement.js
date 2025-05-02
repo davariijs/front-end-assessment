@@ -217,13 +217,6 @@ export const useDomainManagement = () => {
       );
     }
 
-    if (searchTerm) {
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      processedDomains = processedDomains.filter((domain) =>
-        domain.domain?.toLowerCase().includes(lowerSearchTerm)
-      );
-    }
-
     processedDomains.sort((a, b) => {
       switch (sortOrder) {
         case 'name_asc':
@@ -248,7 +241,7 @@ export const useDomainManagement = () => {
     });
 
     return processedDomains;
-  }, [rawDomains, debouncedSearchTerm, sortOrder, searchTerm]);
+  }, [rawDomains, debouncedSearchTerm, sortOrder]);
 
   // --- page number when filters/data change ---
   useEffect(() => {
