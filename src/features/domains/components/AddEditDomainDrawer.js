@@ -72,7 +72,7 @@ const AddEditDomainDrawer = ({
           form={form}
           layout="vertical"
           onFinish={handleFinish}
-          requiredMark={false}
+          requiredMark={true}
           initialValues={{
             isActive: true,
             status: 'pending',
