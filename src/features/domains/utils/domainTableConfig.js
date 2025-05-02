@@ -111,7 +111,7 @@ export const getDomainTableColumns = ({ onEdit, onDelete, onVerify }) => {
           <Text style={{ color: 'rgba(0, 0, 0, 0.88)' }}>{text}</Text>
           <Tooltip title="Go to URL">
             <a
-              href={!text?.startsWith('http') ? `https://${text}` : text}
+              href={text}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: 'rgba(0, 0, 0, 0.45)' }}
