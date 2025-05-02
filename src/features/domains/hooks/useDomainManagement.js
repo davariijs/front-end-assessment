@@ -65,13 +65,35 @@ export const useDomainManagement = () => {
 
   // --- Error Handling Effect ---
   useEffect(() => {
-    const errors = [addError, updateError, deleteError, getError];
+    const errors = [addError, updateError, deleteError, getError].filter(
+      Boolean
+    );
+
     errors.forEach((error) => {
+      let userMessage = 'An unexpected error occurred. Please try again.';
+
       if (error) {
-        const errorMessage =
-          error?.data?.message || error?.error || 'An unknown error occurred';
-        message.error(errorMessage, 3);
-        console.error('API Error:', error);
+        if (error.status === 'FETCH_ERROR') {
+          userMessage = 'Network error. Please check your connection.';
+        } else if (error.status === 'PARSING_ERROR') {
+          userMessage = 'Received an invalid response from the server.';
+          console.error('API Parsing Error Data:', error.data);
+        } else if (typeof error.status === 'number') {
+          if (error.status === 404) {
+            userMessage = 'Resource not found (Error 404).';
+          } else if (error.status >= 500) {
+            userMessage = 'Server error occurred. Please try again later.';
+          } else if (error.data?.message) {
+            userMessage = error.data.message;
+          } else {
+            userMessage = `An error occurred (Status: ${error.status}).`;
+          }
+        } else if (error.error) {
+          userMessage = error.error;
+        }
+
+        message.error(userMessage, 3);
+        console.error('API Error Details:', error);
       }
     });
   }, [addError, updateError, deleteError, getError]);
